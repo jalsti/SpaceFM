@@ -1,0 +1,14 @@
+# SpaceFM Plugin File
+
+# THIS FILE IS NOT DESIGNED TO BE EDITED
+
+[Plugin]
+config_version-s=16
+cstm_05752a71-x=1
+cstm_05752a71-icon=applications-mail
+cstm_05752a71-label=_Attach Files
+cstm_05752a71-task=1
+cstm_05752a71-task_err=1
+cstm_05752a71-task_out=1
+cstm_05752a71-keep=1
+
