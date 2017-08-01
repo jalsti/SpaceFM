@@ -1,10 +1,8 @@
 #!/bin/bash
-$fm_import    # import file manager variables (scroll down for info)
+$fm_import    # import file manager variables
 #
-# Enter your commands here:     ( then save this file )
-
 # NAME: _Attach Files
-# ICON: applications-mail
+# ICON: mail-message-new
 
 <<DESCRIPTION
     Attach is a plugin for the SpaceFM file manager. This plugin opens a compose 
@@ -13,6 +11,8 @@ DESCRIPTION
 
 <<COPYRIGHT
     Copyright (C) 2012-2013  Serge YMR Stroobandt
+    Fixes for Claws Mail attachements and xdg-email multi attachements: 
+    2017 Alexander Stiebing
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,16 +29,18 @@ DESCRIPTION
 COPYRIGHT
 
 <<CONTACT
-    serge@stroobandt.com
+    · Serge YMR Stroobandt: serge@stroobandt.com
+    · Alexander Stiebing: https://github.com/Jaleks
 CONTACT
 
 <<VERSION
-    1.1
+    1.2
 VERSION
 
 FILES=$(for FILE in "${fm_files[@]}"; do
 echo "file://"$(readlink -f "$FILE")""
 done | xargs | sed "s/ file:\/\//,file:\/\//g")
-[ -x /usr/bin/icedove ] && exec icedove -compose "attachment='$FILES'" || [ -x /usr/bin/thunderbird ] && exec thunderbird -compose "attachment='$FILES'" || [ -x /usr/bin/claws-mail ] && exec claws-mail --compose --attach "$@" || exec xdg-email --attach "$1"
+
+[ -x /usr/bin/icedove ] && exec icedove -compose "attachment='$FILES'" || [ -x /usr/bin/thunderbird ] && exec thunderbird -compose "attachment='$FILES'" || [ -x /usr/bin/claws-mail ] && exec claws-mail --compose --attach "${fm_files[@]}" || eval "exec xdg-email $(find "${fm_files[@]}" -print0 | xargs -0 -I % echo -n --attach "'"%"'" \ )"
 
 exit $?
