@@ -1,0 +1,75 @@
+# SpaceFM Plugin File
+
+# THIS FILE IS NOT DESIGNED TO BE EDITED
+
+[Plugin]
+config_version-s=37
+cstm_28871f8c-label=_Subversion
+cstm_28871f8c-child=cstm_59231eb2
+cstm_28871f8c-style=17
+cstm_28871f8c-task=1
+cstm_28871f8c-task_err=1
+cstm_28871f8c-task_out=1
+cstm_28871f8c-keep=1
+cstm_59231eb2-y=
+cstm_59231eb2-label=_update
+cstm_59231eb2-next=cstm_203a7bb1
+cstm_59231eb2-parent=cstm_28871f8c
+cstm_59231eb2-line=svn update
+cstm_59231eb2-task=1
+cstm_59231eb2-task_pop=1
+cstm_59231eb2-task_err=1
+cstm_59231eb2-task_out=1
+cstm_59231eb2-keep=1
+cstm_203a7bb1-s=sdf
+cstm_203a7bb1-x=1
+cstm_203a7bb1-y=
+cstm_203a7bb1-label=_commit
+cstm_203a7bb1-next=cstm_2c2668ba
+cstm_203a7bb1-desc=foo
+cstm_203a7bb1-prev=cstm_59231eb2
+cstm_203a7bb1-line=svn commit ${fm_files[@]} 
+cstm_203a7bb1-task=1
+cstm_203a7bb1-task_err=1
+cstm_203a7bb1-task_out=1
+cstm_2c2668ba-y=
+cstm_2c2668ba-label=_add
+cstm_2c2668ba-next=cstm_0118c267
+cstm_2c2668ba-cxt=0%%%%%0%%%%%1%%%%%11%%%%%
+cstm_2c2668ba-prev=cstm_203a7bb1
+cstm_2c2668ba-line=svn add ${fm_files[@]}
+cstm_2c2668ba-task=1
+cstm_2c2668ba-task_pop=1
+cstm_2c2668ba-task_err=1
+cstm_2c2668ba-task_out=1
+cstm_2c2668ba-keep=1
+cstm_0118c267-x=1
+cstm_0118c267-y=
+cstm_0118c267-label=_diff (PREV)
+cstm_0118c267-next=cstm_488c7794
+cstm_0118c267-prev=cstm_2c2668ba
+cstm_0118c267-line=[ ${#fm_files[@]} -eq 0 ] \\n&& svn diff -rPREV "$fm_pwd"  \\n|| svn diff -rPREV "${fm_files[@]}"\n
+cstm_0118c267-task=1
+cstm_0118c267-task_err=1
+cstm_0118c267-task_out=1
+cstm_0118c267-keep=1
+cstm_488c7794-y=
+cstm_488c7794-label=_log
+cstm_488c7794-next=cstm_3253a3eb
+cstm_488c7794-cxt=0%%%%%0%%%%%8%%%%%0%%%%%false
+cstm_488c7794-prev=cstm_0118c267
+cstm_488c7794-line=svn log -vr1:HEAD "${fm_files[@]}"
+cstm_488c7794-task=1
+cstm_488c7794-task_pop=1
+cstm_488c7794-task_err=1
+cstm_488c7794-task_out=1
+cstm_488c7794-keep=1
+cstm_3253a3eb-x=1
+cstm_3253a3eb-y=
+cstm_3253a3eb-label=_status
+cstm_3253a3eb-prev=cstm_488c7794
+cstm_3253a3eb-task=1
+cstm_3253a3eb-task_err=1
+cstm_3253a3eb-task_out=1
+cstm_3253a3eb-keep=1
+

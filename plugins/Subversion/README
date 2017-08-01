@@ -1,0 +1,8 @@
+Basic subversion commands as SpaceFm plugin:
+
+update		just updates from remote
+commit		commits whole working directory or selected files. Also asks to add unversioned files before comitting
+add			adds selected files (command not available if nothing is selected)
+diff (PREV)	diffs working directory or selected entry to previous version (tries to use meld or kdiff3 for single selection)
+log			log of working directory or selected item  (command not available if more than one entry is selected)
+status		status of whole working directory or selected files
