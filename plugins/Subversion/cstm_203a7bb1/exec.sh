@@ -9,15 +9,19 @@ else
     SVN_STATE="svn status ${fm_filenames[@]}"
 fi
 
-FILES=$($SVN_STATE | grep -v "^?" | tr -s " " " " | cut -f 2 -d" " | xargs -I % echo -n \'%\',\  | sed -r "s/, $//g")
+FILES=$($SVN_STATE     | grep -v "^?" | tr -s " " " " | cut -f 2 -d" " | xargs -I % echo -n \'%\',\  | sed -r "s/, $//g")
 MSG=""
 
-NEW_FILES=$($SVN_STATE | grep "^?" | tr -s " " " " | cut -f 2 -d" " | xargs -I % echo -n \'%\',\  | sed -r "s/, $//g")
+NEW_FILES=$($SVN_STATE | grep "^?"    | tr -s " " " " | cut -f 2 -d" " | xargs -I % echo -n \'%\',\  | sed -r "s/, $//g")
 if [ -n "$NEW_FILES" ]; then
     MSG+="There are unversioned files you might want me to add before comitting: $NEW_FILES\nAdd unversioned files before commit?"
     eval "`spacefm -g --label "$MSG"  --button yes --button no`"
     if [[ "$dialog_pressed" == "button1" ]]; then
-        svn add $NEW_FILES &> /dev/null
+        if [ ${#fm_files[@]} -eq 0 ]; then
+            svn add "$fm_pwd"
+        else
+            svn add "${fm_filenames[@]}"
+        fi
         FILES=$($SVN_STATE | tr -s " " " " | cut -f 2 -d" " | xargs -I % echo -n \'%\',\  | sed -r "s/, $//g")
     fi
 fi

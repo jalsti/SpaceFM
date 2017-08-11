@@ -1,6 +1,7 @@
 #!/bin/bash
 $fm_import    # import file manager variables 
 
+# svn diff selected files
 
 DIFFTOOL=""
 if [ ${#fm_files[@]} -eq 1 ]; then

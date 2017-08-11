@@ -1,6 +1,8 @@
 #!/bin/bash
 $fm_import    # import file manager variables
 
+# svn status
+
 echo -n "svn status "
 if [ ${#fm_files[@]} -eq 0 ]; then
 	echo for "$fm_pwd":
