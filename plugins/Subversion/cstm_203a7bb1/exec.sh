@@ -2,43 +2,57 @@
 $fm_import    # import file manager variables 
 
 
-
 if [ ${#fm_files[@]} -eq 0 ]; then
-    SVN_STATE="svn status $fm_pwd"
+    FMFILES="$fm_pwd"
 else
-    SVN_STATE="svn status ${fm_filenames[@]}"
+    FMFILES="${fm_filenames[@]}"
 fi
+SVN_STATE="svn status "$FMFILES""
 
-FILES=$($SVN_STATE     | grep -v "^?" | tr -s " " " " | cut -f 2 -d" " | xargs -I % echo -n \'%\',\  | sed -r "s/, $//g")
-MSG=""
+FILELIST=$(mktemp)
+NEW_FILES=$($SVN_STATE | grep "^?" | sed -r "s/^\? +//g" | xargs -I % echo -n %\\n)
 
-NEW_FILES=$($SVN_STATE | grep "^?"    | tr -s " " " " | cut -f 2 -d" " | xargs -I % echo -n \'%\',\  | sed -r "s/, $//g")
 if [ -n "$NEW_FILES" ]; then
-    MSG+="There are unversioned files you might want me to add before comitting: $NEW_FILES\nAdd unversioned files before commit?"
-    eval "`spacefm -g --label "$MSG"  --button yes --button no`"
+    echo -e $NEW_FILES > $FILELIST
+    eval "`spacefm -g --label --nowrap "There are unversioned files you might want me to add before comitting:" \
+            --viewer --scroll $FILELIST \
+            --label "Add unversioned files before commit?"  \
+            --button yes --button no`"
     if [[ "$dialog_pressed" == "button1" ]]; then
-        if [ ${#fm_files[@]} -eq 0 ]; then
-            svn add "$fm_pwd"
-        else
-            svn add "${fm_filenames[@]}"
-        fi
-        FILES=$($SVN_STATE | tr -s " " " " | cut -f 2 -d" " | xargs -I % echo -n \'%\',\  | sed -r "s/, $//g")
+        svn add $($SVN_STATE | grep "^?" | sed -r "s/^\? +//g")
     fi
 fi
 
+FILES=$($SVN_STATE | grep -ve "^?" | xargs -I % echo -n %\\n)
+
 if [ -z "$FILES" ]; then
-    MSG="No changes to commit. "
-    spacefm -g --label "$MSG"  --button ok &>/dev/null
+    spacefm -g  --hbox --icon messagebox_info --label "No changes to commit."  --button close &>/dev/null
+    rm $FILELIST
     exit 0
 fi
 
-eval "`spacefm -g --label "Enter commit message for $FILES" --button ok --button cancel --input "commit message"`"
+echo -e $FILES > $FILELIST
+TEMPMESSAGE="commit message"
+eval "`spacefm -g --label --nowrap "Enter commit message for:" \
+        --viewer $FILELIST \
+        --vbox --compact --input "$TEMPMESSAGE"      \
+        --button ok --button cancel`"
 if [[ "$dialog_pressed" == "button2" ]]; then
+    rm $FILELIST
     exit 0
 fi
 
-[ ${#fm_files[@]} -eq 0 ] \
-&& svn commit "$fm_pwd" -m "$dialog_input1" \
-|| svn commit "${fm_files[@]}" -m "$dialog_input1"
+if [ "$dialog_input1" == "$TEMPMESSAGE" ] || [ -z "$(echo $TEMPMESSAGE | sed "s/\s//g")" ]; then
+    spacefm -g --hbox \
+            --icon messagebox_warning \
+            --label --nowrap  "Cowardly rejecting commits without real message.\n(This means nothing was commited.)" \
+            --button close &>/dev/null
+    rm $FILELIST
+    exit 0
+fi
 
-exit $?
+svn commit $FMFILES -m "$dialog_input1"
+RES=$?
+rm $FILELIST
+
+exit $RES

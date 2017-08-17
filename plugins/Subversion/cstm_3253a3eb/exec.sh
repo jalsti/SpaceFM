@@ -5,7 +5,7 @@ $fm_import    # import file manager variables
 
 echo -n "svn status "
 if [ ${#fm_files[@]} -eq 0 ]; then
-	echo for "$fm_pwd":
+	echo for directory:
 	echo –––
 	svn status "$fm_pwd" 
 else
